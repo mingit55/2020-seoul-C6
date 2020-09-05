@@ -38,6 +38,7 @@
                     <div class="modal-body">
                         <div class="py-2">
                             <div class="fx-4 mb-2"><?= enc($inquire->title) ?></div>
+                            <div class="fx-n1 text-muted mb-3"><?= $inquire->user_name ?>(<?=$inquire->user_email?>)</div>
                             <div class="fx-n1 text-muted mb-3"><?= dt($inquire->created_at) ?></div>
                             <div class="fx-2"><?= enc($inquire->content) ?></div>
                         </div>

@@ -274,6 +274,7 @@ class ActionController {
         if(!$artwork) back("대상을 찾을 수 없습니다.");
 
         DB::query("INSERT INTO scores(uid, aid, score) VALUES (?, ?, ?)", [user()->id, $artwork->id, $score]);
+        DB::query("UPDATE users SET score = score + ? WHERE id = ?", [100 * $score, $artwork->uid]);
 
         go("/artworks/$aid");
     }

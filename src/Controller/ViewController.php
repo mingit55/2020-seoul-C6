@@ -142,16 +142,18 @@ class ViewController {
     function inquires(){
         if(admin()){
             view("inquires-admin", [
-                "inquires" => DB::fetchAll("SELECT I.*, A.id answered, A.content answer, A.created_at answered_at
+                "inquires" => DB::fetchAll("SELECT I.*, A.id answered, A.content answer, A.created_at answered_at, user_name, user_email
                                             FROM inquires I
+                                            LEFT JOIN users U ON U.id = I.uid
                                             LEFT JOIN answers A ON A.iid = I.id
                                             ORDER BY id DESC")
             ]);
         }
         else if(user()) {
             view("inquires-user", [
-                "inquires" => DB::fetchAll("SELECT I.*, A.id answered, A.content answer, A.created_at answered_at
+                "inquires" => DB::fetchAll("SELECT I.*, A.id answered, A.content answer, A.created_at answered_at, user_name, user_email
                                             FROM inquires I
+                                            LEFT JOIN users U ON U.id = I.uid
                                             LEFT JOIN answers A ON A.iid = I.id
                                             WHERE I.uid = ?
                                             ORDER BY id DESC", [user()->id])
