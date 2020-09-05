@@ -1,3 +1,5 @@
+const UID = $("#uid").val();
+
 class App {
     constructor(){
         new IDB("seoul", ["papers", "inventory"], async db => {
@@ -25,27 +27,30 @@ class App {
     }
 
     async getPapers(){
-        let papers = await this.db.getAll("papers");
+        return fetch("/api/papers")
+            .then(res => res.json())
+            .then(jsonList => jsonList.map(paper => new Paper(paper)));
+        // let papers = await this.db.getAll("papers");
 
-        if(papers.length === 0){
-            papers = await ( fetch("/json/papers.json").then(res => res.json()) );
-            papers = papers.map(paper => ({
-                ...paper,
-                id: parseInt(paper.id),
-                width_size: parseInt( paper.width_size.replace(/[^0-9]/g, "") ),
-                height_size: parseInt( paper.height_size.replace(/[^0-9]/g, "") ),
-                point: parseInt( paper.point.replace(/[^0-9]/g, "") ),
-                image: "/images/papers/" + paper.image,
-                hash_tags: paper.hash_tags.map(tag => tag.substr(1))
-            }));
+        // if(papers.length === 0){
+        //     papers = await ( fetch("/json/papers.json").then(res => res.json()) );
+        //     papers = papers.map(paper => ({
+        //         ...paper,
+        //         id: parseInt(paper.id),
+        //         width_size: parseInt( paper.width_size.replace(/[^0-9]/g, "") ),
+        //         height_size: parseInt( paper.height_size.replace(/[^0-9]/g, "") ),
+        //         point: parseInt( paper.point.replace(/[^0-9]/g, "") ),
+        //         image: "/images/papers/" + paper.image,
+        //         hash_tags: paper.hash_tags.map(tag => tag.substr(1))
+        //     }));
 
-            papers.forEach(paper => {
-                this.db.add("papers", paper);
-            });
-        }
-        console.log(papers);
+        //     papers.forEach(paper => {
+        //         this.db.add("papers", paper);
+        //     });
+        // }
+        // console.log(papers);
 
-        return papers.map(paper => new Paper(paper));
+        // return papers.map(paper => new Paper(paper));
     }
 
     updateStore(){
@@ -74,7 +79,7 @@ class App {
         $(".total-point").text( this.totalPoint.toLocaleString() );
         $("#totalPoint").val( this.totalPoint );
         $("#totalCount").val( this.totalCount );
-        $("#cartList").val( this.cartList );
+        $("#cartList").val( JSON.stringify(this.cartList.map(item => ({id: item.id, count: item.buyCount}))) );
     }
 
     setEvents(){
@@ -98,26 +103,26 @@ class App {
         });
 
         $("#add-form").on("submit", async e => {
-            e.preventDefault();
+            // e.preventDefault();
 
-            let inputs = Array.from( $("#add-form input[name]") )
-                .reduce((p, c) => {
-                    p[c.name] = c.value;
-                    return p;
-                }, {});
+            // let inputs = Array.from( $("#add-form input[name]") )
+            //     .reduce((p, c) => {
+            //         p[c.name] = c.value;
+            //         return p;
+            //     }, {});
             
-            inputs.width_size = parseInt(inputs.width_size);
-            inputs.height_size = parseInt(inputs.height_size);
-            inputs.point = parseInt(inputs.point);
-            inputs.hash_tags = JSON.parse(inputs.hash_tags);
+            // inputs.width_size = parseInt(inputs.width_size);
+            // inputs.height_size = parseInt(inputs.height_size);
+            // inputs.point = parseInt(inputs.point);
+            // inputs.hash_tags = JSON.parse(inputs.hash_tags);
             
-            inputs.id = await this.db.add("papers", inputs);
+            // inputs.id = await this.db.add("papers", inputs);
 
-            this.papers.push( new Paper(inputs) );
-            this.tags.push(...inputs.hash_tags);
-            this.updateStore();
+            // this.papers.push( new Paper(inputs) );
+            // this.tags.push(...inputs.hash_tags);
+            // this.updateStore();
 
-            $("#add-form").modal("hide");
+            // $("#add-form").modal("hide");
         });
 
         $("#store").on("click", ".btn-add", e => {
@@ -157,31 +162,31 @@ class App {
         });
 
         $("#buy-form").on("submit", async e => {
-            e.preventDefault();
+            // e.preventDefault();
 
-            alert(`총 ${this.totalCount}개의 한지가 구매되었습니다.`);
+            // alert(`총 ${this.totalCount}개의 한지가 구매되었습니다.`);
 
-            await Promise.all(this.cartList.map(async item => {
-                let exist = await this.db.get("inventory", item.id);
-                if(exist){
-                    exist.hasCount += item.buyCount;
-                    await this.db.put("inventory", exist);
-                } else {
-                    await this.db.add("inventory", {
-                        id: item.id,
-                        hasCount: item.buyCount,
-                        paper_name: item.paper_name,
-                        width_size: item.width_size,
-                        height_size: item.height_size,
-                        image: item.image,
-                    });
-                }
-                item.buyCount = 0;
-            }));
+            // await Promise.all(this.cartList.map(async item => {
+            //     let exist = await this.db.get("inventory", item.id);
+            //     if(exist){
+            //         exist.hasCount += item.buyCount;
+            //         await this.db.put("inventory", exist);
+            //     } else {
+            //         await this.db.add("inventory", {
+            //             id: item.id,
+            //             hasCount: item.buyCount,
+            //             paper_name: item.paper_name,
+            //             width_size: item.width_size,
+            //             height_size: item.height_size,
+            //             image: item.image,
+            //         });
+            //     }
+            //     item.buyCount = 0;
+            // }));
 
-            this.cartList = [];
-            this.updateStore();
-            this.updateCart();
+            // this.cartList = [];
+            // this.updateStore();
+            // this.updateCart();
         });
 
         $(".btn-search").on("click", e => {
@@ -192,8 +197,9 @@ class App {
 }
 
 class Paper {
-    constructor({id, paper_name, company_name, width_size, height_size, point, image, hash_tags}){
+    constructor({id, uid, paper_name, company_name, width_size, height_size, point, image, hash_tags}){
         this.id = id;
+        this.uid = uid;
         this.paper_name = paper_name;
         this.company_name = company_name;
         this.width_size = width_size;
@@ -220,7 +226,9 @@ class Paper {
                                         <div class="mt-1 d-flex flex-wrap fx-n2 text-muted">
                                             ${ this.hash_tags.map(tag => `<span class="m-1">#${tag}</span>`).join('') }
                                         </div>
-                                        <button class="btn-add btn-filled mt-3" data-id="${this.id}">구매하기</button>
+                                        ${
+                                            UID == this.uid ? "" : `<button class="btn-add btn-filled mt-3" data-id="${this.id}">구매하기</button>`
+                                        }
                                     </div>
                                 </div>
                             </div>`);

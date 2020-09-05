@@ -22,8 +22,9 @@ class Router {
             $regex = preg_replace("/\//", "\\/", $regex);
             if(preg_match("/^{$regex}$/", $currentURL, $matches)){
                 if($permission){
-                    if($permission === "guest" && user()) go("/","로그인한 회원은 접근할 수 없습니다.");
+                    if($permission === "guest" && user()) go("/", "로그인한 회원은 접근할 수 없습니다.");
                     if($permission === "login" && !user()) go("/sign-in", "로그인 후 이용하실 수 있습니다.");
+                    if($permission === "user" && (!user() || admin())) go("/", "회원만 이용할 수 있습니다.");
                     if($permission === "company" && !company()) back("기업 회원만 이용가능합니다.");
                     if($permission === "admin" && !admin()) back("권한이 없습니다.");
                 }

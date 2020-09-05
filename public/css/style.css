@@ -6,6 +6,7 @@
     box-sizing: border-box;
 }
 *, *:focus { outline: none!important; }
+[disabled] { pointer-events: none; opacity: 0.8; }
 a, a:hover { text-decoration: none; }
 a, label, button { cursor: pointer; user-select: none; }
 p { margin-bottom: 0; line-height: 1.8em; }

@@ -16,7 +16,6 @@ class App {
             this.ws = new Workspace(this);
 
             let artworks = await( fetch("/json/craftworks.json").then(res => res.json()) );
-            console.log(artworks);
             let tags = artworks.reduce((p, c) => [...p, ...c.hash_tags.map(tag => tag.substr(1))], []);
             this.entryModule = new HashModule("#entry-module", tags);
 
@@ -29,7 +28,8 @@ class App {
     }
 
     getInventory(){
-        return this.db.getAll("inventory");
+        return fetch("/api/inventory")
+            .then(res => res.json());
     }
 
     makeContextMenu(x, y, menus){
@@ -92,7 +92,7 @@ class App {
                                                                             </div>
                                                                             <div class="mt-2">
                                                                                 <span class="fx-n2 text-muted">소지수량</span>
-                                                                                <span class="fx-n1 ml-2">${item.hasCount}</span>
+                                                                                <span class="fx-n1 ml-2">${item.count < 0 ? '∞' : item.count}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -101,13 +101,15 @@ class App {
 
         $("#add-modal").on("click", ".item", e => {
             let item = this.inventory.find(item => item.id == e.currentTarget.dataset.id);
-            item.hasCount--;
+            item.count--;
 
-            if(item.hasCount === 0){
+            if(item.count === 0){
                 this.inventory = this.inventory.filter(it => it !== item);
-                this.db.delete("inventory", item.id);
+                $.post("/delete/inventory/" + item.pid);
+                // this.db.delete("inventory", item.id);
             } else {
-                this.db.put("inventory", item);
+                $.post("/update/inventory/" + item.pid, {count: item.count});
+                // this.db.put("inventory", item);
             }
 
             this.ws.addPart( {imageURL: item.image, width: item.width_size, height: item.height_size} );
@@ -179,6 +181,19 @@ class App {
             $(".search-message").text(`${this.findList.length}개 중 ${this.focusIdx + 1}번째`);
         });
         
+
+        $("#entry").on("submit", e => {
+            e.preventDefault();
+
+            if(this.ws.selected) {
+                this.ws.tool.unselectAll();
+            }
+
+            let url = this.ws.canvas.toDataURL("image/jpeg");
+            $("#image").val(url);
+
+            $("#entry")[0].submit();
+        });
     }
 }
 

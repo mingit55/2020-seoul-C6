@@ -48,7 +48,7 @@ function view($viewName, $data = []){
 }
 
 function extname($filename){
-    return substr($filename, strrpos($filename, "."));
+    return strtolower(substr($filename, strrpos($filename, ".")));
 }
 
 function checkEmpty(){
@@ -85,7 +85,7 @@ function fileinfo($filename){
     $viewPath = "/uploads/$filename";
     $fileSize = number_format(filesize($localPath) / 1024 , 1) . "KB";
     $extname = extname($filename);
-    return (object)compact("localPath", "viewPath", "fileSize", "extname");
+    return (object)compact("name", "filename", "localPath", "viewPath", "fileSize", "extname");
 }
 
 function upload_base64($data){
@@ -102,4 +102,29 @@ function dt($time){
 
 function enc($output){
     return nl2br( str_replace(" ", "&nbsp;", htmlentities($output))  );
+}
+
+function pagination($data){
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] >= 1 ? $_GET['page'] : 1;
+
+    define("PAGE__COUNT", 8);
+    define("PAGE__BCOUNT", 5);
+
+    $totalPage = ceil(count($data) / PAGE__COUNT);
+    $c_block = ceil( $page / PAGE__BCOUNT );
+        
+    $start = ($c_block - 1) * PAGE__BCOUNT + 1;
+    $end = $start + PAGE__BCOUNT - 1;
+    $end = $end >= $totalPage ? $totalPage : $end;
+
+    $prevPage = $start - 1;
+    $prev = $prevPage >= 1;
+
+    $nextPage = $end + 1;
+    $next = $nextPage <= $totalPage;
+
+
+    $data = array_slice($data, ($page - 1) * PAGE__COUNT, PAGE__COUNT);
+
+    return (object)compact("start" , "end", "prev", "prevPage", "next", "nextPage", "page", "data");
 }

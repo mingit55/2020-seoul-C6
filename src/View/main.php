@@ -75,34 +75,34 @@
                 </div>
                 <div class="row mt-5">
                     <div class="col-lg-2 col-sm-4 col-6 mb-4">
-                        <div class="align-center flex-column">
+                        <a href="/intro" class="align-center flex-column">
                             <i class="fa fa-quote-left fa-2x text-yellow"></i>
                             <span class="fx-n2 mt-3">축제개요</span>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-lg-2 col-sm-4 col-6 mb-4">
-                        <div class="align-center flex-column">
+                        <a href="/roadmap" class="align-center flex-column">
                             <i class="fa fa-map-marker fa-2x text-yellow"></i>
                             <span class="fx-n2 mt-3">오시는 길</span>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-lg-2 col-sm-4 col-6 mb-4">
-                        <div class="align-center flex-column">
+                        <a href="/store" class="align-center flex-column">
                             <i class="fa fa-shopping-cart fa-2x text-yellow"></i>
                             <span class="fx-n2 mt-3">한지 스토어</span>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-lg-2 col-sm-4 col-6 mb-4">
-                        <div class="align-center flex-column">
+                        <a href="/entry" class="align-center flex-column">
                             <i class="fa fa-send fa-2x text-yellow"></i>
                             <span class="fx-n2 mt-3">출품 신청</span>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-lg-2 col-sm-4 col-6 mb-4">
-                        <div class="align-center flex-column">
+                        <a href="/artworks" class="align-center flex-column">
                             <i class="fa fa-file-image-o fa-2x text-yellow"></i>
                             <span class="fx-n2 mt-3">참가 작품</span>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -122,42 +122,31 @@
                     <hr class="bg-red">
                     <div class="title text-red">알려드립니다</div>
                 </div>
-                <a href="#" class="text-red fx-n2">더 보기 +</a>
+                <a href="/notices" class="text-red fx-n2">더 보기 +</a>
             </div>
             <div class="row">
                 <div class="col-lg-7 mb-4 mb-lg-0">
-                    <div class="text-title">온라인 한지 공예대전 개최 안내</div>
-                    <div class="fx-n1 text-muted mt-3">2020-06-30</div>
-                    <div class="mt-3 keep-all text-muted fx-n1">
-                        <p class="auto-line">열락의 없으면 할지니, 피고 만천하의 끓는다. 동력은 청춘 같이, 것은 그들은 산야에 너의 위하여 같은 것이다. 고행을 관현악이며, 때에, 피가 황금시대의 이상의 이것을 끝에 그들의 약동하다. 과실이 얼마나 이상을 군영과 칼이다. 있는 찬미를 대중을 쓸쓸하랴?</p> 
+                <?php if(count($notices) > 0):?>
+                    <?php $first = $notices[0];?>
+                    <div onclick="location.href='/notices/<?=$first->id?>'">
+                        <div class="text-title"><?= enc($first->title) ?></div>
+                        <div class="fx-n1 text-muted mt-3"><?= dt($first->created_at) ?></div>
+                        <div class="mt-3 keep-all text-muted fx-n1">
+                            <p class="auto-line"><?= enc($first->content) ?></p> 
+                        </div>
                     </div>
+                <?php endif;?>
                 </div>
                 <div class="col-lg-5">
                     <div class="border-top">
-                        <div class="t-row">
-                            <div class="cell-70 text-ellipsis fx-n1 text-left" title="제26회 전국한지공예대전 입상자 발표합니다.">
-                                제26회 전국한지공예대전 입상자 발표합니다.
+                        <?php foreach(array_slice($notices, 1) as $notice):?>
+                        <div class="t-row" onclick="location.href='/notices/<?=$notice->id?>'">
+                            <div class="cell-70 text-ellipsis fx-n1 text-left" title="<?=enc($notice->title)?>">
+                                <?=enc($notice->title)?>
                             </div>
-                            <div class="cell-30 text-right fx-n2 text-muted">2020-05-22</div>
+                            <div class="cell-30 text-right fx-n2 text-muted"><?=dt($notice->created_at)?></div>
                         </div>                  
-                        <div class="t-row">
-                            <div class="cell-70 text-ellipsis fx-n1 text-left" title="제26회 전국한지공예대전 개최요강">
-                                제26회 전국한지공예대전 개최요강
-                            </div>
-                            <div class="cell-30 text-right fx-n2 text-muted">2020-03-23</div>
-                        </div>
-                        <div class="t-row">
-                            <div class="cell-70 text-ellipsis fx-n1 text-left" title="제23회 전주한지문화축제 안중걸 캐리커쳐 드로잉">
-                                제23회 전주한지문화축제 안중걸 캐리커쳐 드로잉
-                            </div>
-                            <div class="cell-30 text-right fx-n2 text-muted">2019-05-15</div>
-                        </div>
-                        <div class="t-row">
-                            <div class="cell-70 text-ellipsis fx-n1 text-left" title="2019 전주한지문화축제 산업관 문화마켓 참여업체 모집공고(추가모집)">
-                                2019 전주한지문화축제 산업관 문화마켓 참여업체 모집공고(추가모집)
-                            </div>
-                            <div class="cell-30 text-right fx-n2 text-muted">2019-04-16</div>
-                        </div>
+                        <?php endforeach;?>
                     </div>
                 </div>
             </div>
@@ -177,39 +166,21 @@
                         <div class="text-gray">갤러리</div>
                         <div class="text-title mt-4 text-white">온라인으로 함께
                             한지공예대전</div>
-                        </div>
-                    <button class="btn-custom btn-custom--white mb-4 mb-lg-0">Detail View +</button>
+                    </div>
+                    <button class="btn-custom btn-custom--white mb-4 mb-lg-0" onclick="location.href='/artworks'">Detail View +</button>
                 </div>
+                <?php foreach($artworks as $artwork):?>
                 <div class="col-lg-3 col-6 mb-4 mb-lg-0">
-                    <div class="bg-white pickable">
-                        <img src="/images/gallery/1.jpg" alt="갤러리 이미지" title="갤러리 이미지" class="fit-contain hx-250">
+                    <div class="bg-white pickable" onclick="location.href='/artworks/<?=$artwork->id?>'">
+                        <img src="/uploads/<?=$artwork->image?>" alt="갤러리 이미지" title="갤러리 이미지" class="fit-contain hx-250">
                         <div class="p-3">
                             <hr>
-                            <div class="fx-2">포뭄과 말룸</div>
-                            <div class="fx-n2 text-muted">오주희</div>
+                            <div class="fx-2"><?= enc($artwork->title) ?></div>
+                            <div class="fx-n2 text-muted"><?= enc($artwork->user_name) ?></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="bg-white pickable">
-                        <img src="/images/gallery/2.jpg" alt="갤러리 이미지" title="갤러리 이미지" class="fit-contain hx-250">
-                        <div class="p-3">
-                            <hr>
-                            <div class="fx-2">검독수리 사냥</div>
-                            <div class="fx-n2 text-muted">범인자</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
-                    <div class="bg-white pickable">
-                        <img src="/images/gallery/3.jpg" alt="갤러리 이미지" title="갤러리 이미지" class="fit-contain hx-250">
-                        <div class="p-3">
-                            <hr>
-                            <div class="fx-2">둥근상</div>
-                            <div class="fx-n2 text-muted">전학식</div>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach;?>
             </div>
         </div>
     </div>

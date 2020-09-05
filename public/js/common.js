@@ -184,3 +184,18 @@ class HashModule {
         });
     }
 }
+
+
+$(function(){
+
+    $(".custom-file-input").on("change", e => {
+        let $label = $(e.target).siblings(".custom-file-label");
+        let files = e.target.files;
+
+        if(files.length > 0) {
+            $label.text(`${files.length}개의 파일`);
+        } else {
+            $label.text("파일을 선택하세요");
+        }     
+    });
+});
